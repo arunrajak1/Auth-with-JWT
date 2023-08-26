@@ -1,24 +1,25 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import LoginPage from './Componets/LoginPage/LoginPage';
+import RecordScreen from './Componets/RecordingMedia/RecordScreen';
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    {!user ? (
+      <LoginPage onLogin={handleLogin} />
+    ) : (
+      <div className='mt-5'>
+        <h1 className='text-2xl mb-5 font-serif'>Welcome, {user.name}!</h1>
+        <RecordScreen></RecordScreen>
+      </div>
+    )}
+  </div>
   );
 }
 
