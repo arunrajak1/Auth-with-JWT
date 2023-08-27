@@ -18,9 +18,7 @@ const LoginPage = () => {
 
   const handleSubmitChange = async (e) => {
     e.preventDefault();
-    // if (email && name) {
-    //   onLogin({ email, name });
-    // }
+  
     try {
       await axios
         .post("https://auth-with-jwt.onrender.com/", { name, email })
