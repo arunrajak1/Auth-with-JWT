@@ -18,15 +18,17 @@ const LoginPage = () => {
 
   const handleSubmitChange = async (e) => {
     e.preventDefault();
-    
+    // if (email && name) {
+    //   onLogin({ email, name });
+    // }
     try {
       await axios
-        .post("https://auth-with-jwt.onrender.com/login", { name, email })
+        .post("https://auth-with-jwt.onrender.com/", { name, email })
         .then((response) => {
           token=response.data.token
           if(token && token.length){
             localStorage.setItem('token',token)
-            // console.log("Login Successful");
+            console.log("Login Successful");
             navigate('/',{
               state:{
                 name,
