@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
+import { useLocation, useNavigate } from "react-router-dom";
+import { saveAs } from 'file-saver'
+
 
 const RecordScreen = () => {
   const [confirmed, setConfirmed] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [recordingFinished, setRecordingFinished] = useState(false);
+
   const [recordingType, setRecordingType] = useState(null);
   const [recordedChunks, setRecordedChunks] = useState([]);
+  const navigate = useNavigate()
+  const location = useLocation()
+  const name = location?.state?.name
+  const email = location?.state?.email
 
   const { startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
-    useReactMediaRecorder({
-      screen: recordingType === "screen",
+  useReactMediaRecorder({
+    screen: recordingType === "screen",
       audio: true,
       video: recordingType === "webcam",
     });
@@ -25,6 +34,7 @@ const RecordScreen = () => {
     if (recording) {
       stopRecording();
       setRecording(false);
+      setRecordingFinished(true);
     } else {
       startRecording();
       setRecording(true);
@@ -32,6 +42,7 @@ const RecordScreen = () => {
   };
 
   const handleSaveRecording = () => {
+    // console.log(mediaBlobUrl,"<=blobUrl")
     if (mediaBlobUrl) {
       setRecordedChunks((prevChunks) => [...prevChunks, mediaBlobUrl]);
       clearBlobUrl();
@@ -44,24 +55,28 @@ const RecordScreen = () => {
     }
   };
 
-  const handleDownloadBlob = (blobUrl) => {
-    fetch(blobUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = "recorded_chunk.mp4";
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      });
+
+  const handleDownloadBlob = async (blobUrl) => {
+    try {
+     
+      localStorage.setItem('recording',blobUrl)
+      if (blobUrl) {
+        const mp4File = new File([blobUrl], 'demo.mp4', { type: 'video/mp4' })
+        saveAs(mp4File, `Video-${Date.now()}.mp4`)
+      }
+   
+    } catch (error) {
+      console.error("Error downloading blob:", error);
+    }
+   
   };
 
   return (
-    <div className="flex flex-col items-center h-screen mb-5">
+    <>
+     {
+      email ? (
+    <div className="flex flex-col items-center h-screen mb-5 ml-5 mr-5">
+        <h1 className="mt-10 font-serif  text-2xl mb-5">Welcome {name}!</h1>
       {!confirmed && (
         <div>
           <button
@@ -87,7 +102,7 @@ const RecordScreen = () => {
             >
               {recording ? "Stop Recording" : "Start Recording"}
             </button>
-            {recording && (
+            {recordingType && recording=== false && (
               <button
                 className="rounded-lg bg-sky-400   hover:bg-sky-600 border text-white px-6 py-2 ml-2 mb-10"
                 onClick={handleSaveRecording}
@@ -96,7 +111,9 @@ const RecordScreen = () => {
               </button>
             )}
           </div>
-          <video src={mediaBlobUrl} autoPlay loop controls></video>
+          {recordingFinished === true && (
+          <video src={mediaBlobUrl} autoPlay muted controls></video>
+      )}
         </>
       )}
       {recordedChunks.length > 0 && (
@@ -117,6 +134,9 @@ const RecordScreen = () => {
         </div>
       )}
     </div>
+     ): navigate('/login')
+     }
+     </>
   );
 };
 
