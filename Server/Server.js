@@ -15,7 +15,7 @@ const User = mongoose.model('User', new mongoose.Schema({
   email: String,
 }));
 
-app.post('/login', async (req, res) => {
+app.post('/', async (req, res) => {
   const { name, email } = req.body;
 
   try {
