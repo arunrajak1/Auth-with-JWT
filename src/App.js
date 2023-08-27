@@ -1,15 +1,21 @@
 import "./App.css";
-import HomePage from "./Componets/Home/HomePage";
 import LoginPage from "./Componets/LoginPage/LoginPage";
 import RecordScreen from "./Componets/RecordingMedia/RecordScreen";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes ,useLocation} from "react-router-dom";
 
 function App() {
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === "https://auth-with-jwt.onrender.com/";
   return (
     <Routes>
-      <Route path="/" element={<HomePage/>}/>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/" element={ <RecordScreen />} />
+      {isLoginPage ? (
+        <Route path="/login" element={<LoginPage />} />
+      ) : (
+        <>
+          <Route path="/" element={<RecordScreen />} />
+        </>
+      )}
       <Route path="*" element={<LoginPage />} />
     </Routes>
   );
