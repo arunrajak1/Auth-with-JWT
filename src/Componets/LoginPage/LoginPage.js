@@ -21,7 +21,7 @@ const LoginPage = () => {
   
     try {
       await axios
-        .post("https://auth-with-jwt.onrender.com/",{ name, email })
+        .post("https://127.0.0.1:3000/login", { name, email })
         .then((response) => {
           token=response.data.token
           if(token && token.length){
