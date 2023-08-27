@@ -21,12 +21,12 @@ const LoginPage = () => {
     
     try {
       await axios
-        .post("https://auth-with-jwt.onrender.com/", { name, email })
+        .post("https://auth-with-jwt.onrender.com/login", { name, email })
         .then((response) => {
           token=response.data.token
           if(token && token.length){
             localStorage.setItem('token',token)
-            console.log("Login Successful");
+            // console.log("Login Successful");
             navigate('/',{
               state:{
                 name,
